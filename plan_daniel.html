@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1565c0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Plan de visitas - Daniel</title>
+<style>
+:root{--azul:#1565c0;--azul-cl:#e3eefb;--bg:#eef1f5;--txt:#1b2430;--sub:#6b7686;--borde:#e1e6ee;--verde:#1a8a4a;--rojo:#c0392b;--sombra:0 1px 3px rgba(20,40,80,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg)}
+body{font-family:-apple-system,system-ui,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--txt);-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+.app{max-width:900px;margin:0 auto;padding-bottom:96px}
+.appbar{position:sticky;top:0;z-index:50;background:var(--azul);color:#fff;display:flex;align-items:center;gap:12px;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top))}
+.ab-logo{width:36px;height:36px;border-radius:10px;background:#fff;color:var(--azul);font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ab-txt{min-width:0;flex:1}
+.ab-title{font-size:17px;font-weight:700;line-height:1.2}
+.ab-sub{font-size:12.5px;opacity:.88;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero-s{background:var(--azul);height:30px}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:7px 14px;border-radius:20px;background:#fff;border:1px solid var(--borde);font-size:13px;color:var(--sub);cursor:pointer;font-weight:500;white-space:nowrap}
+.chip.on{background:var(--azul);border-color:var(--azul);color:#fff}
+.pl-ctl{margin:-18px 16px 0;display:grid;gap:10px;position:relative}
+.pl-tot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 16px 0}
+.pl-tot div{background:#fff;border-radius:10px;padding:8px;text-align:center;box-shadow:var(--sombra)}
+.pl-tot b{display:block;font-size:20px;font-variant-numeric:tabular-nums}.pl-tot small{font-size:11.5px;color:var(--sub)}
+.pl-sw-row{display:flex;gap:12px;align-items:center;margin:12px 16px 0;background:#fff;border-radius:12px;padding:10px 14px;box-shadow:var(--sombra);cursor:pointer}
+.pl-sw-row b{font-size:14px;display:block}.pl-sw-row small{font-size:12px;color:var(--sub)}.pl-sw-row div{min-width:0;flex:1}
+.pl-sw{width:40px;height:24px;border-radius:12px;background:#cfd6df;position:relative;flex:none;transition:background .15s}
+.pl-sw i{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s}
+.pl-sw.on{background:var(--rojo)}.pl-sw.on i{left:19px}
+.pl-sw.gps.on{background:var(--azul)}
+.pl-ley{display:flex;flex-wrap:wrap;gap:10px 14px;margin:10px 16px 0;font-size:12.5px;color:var(--sub)}
+.pl-ley span{display:flex;align-items:center;gap:5px}
+.pl-dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex:none}
+.pl-x{color:var(--rojo);font-style:normal;font-weight:800}
+.pl-map-w{position:relative;margin:12px 16px 0}
+.pl-map{height:52vh;min-height:300px;border-radius:12px;overflow:hidden;box-shadow:var(--sombra);background:#dfe5ec}
+.pl-yo-btn{position:absolute;right:10px;bottom:24px;z-index:500;background:#fff;border:none;border-radius:22px;padding:9px 14px;font-weight:700;font-size:13px;color:var(--azul);box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer}
+.pl-lst{margin:12px 16px 0;border-radius:12px;overflow:hidden;box-shadow:var(--sombra)}
+.pl-it{display:flex;gap:10px;align-items:center;background:#fff;padding:10px 12px 10px 14px;border-bottom:1px solid var(--borde)}
+.pl-it .pl-inf{min-width:0;flex:1;cursor:pointer}
+.pl-it b{font-size:14px;display:block}.pl-it small{font-size:12px;color:var(--sub)}
+.pl-it .km{font-weight:700;color:var(--azul)}
+.pl-ir{flex:none;padding:8px 12px;border-radius:9px;background:var(--verde);color:#fff;font-weight:700;font-size:13px;text-decoration:none}
+.pl-orden{display:flex;justify-content:space-between;align-items:center;margin:16px 16px 0;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--sub)}
+.pl-orden span.lk{color:var(--azul);cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px}
+.empty{text-align:center;padding:2rem 1rem;color:#9aa4b2;font-size:14px;background:#fff}
+.bottom-bar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.08);padding:10px 10px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;max-width:900px;margin:0 auto}
+.bb-btn{flex:1;padding:15px 8px;font-size:16px;font-weight:800;border:none;border-radius:6px;color:#fff;background:var(--verde);cursor:pointer;letter-spacing:.02em}
+.bb-btn:disabled{background:#b8c0cc}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:85vh;overflow:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.sheet h3{font-size:17px;margin-bottom:4px}.sheet p{font-size:13px;color:var(--sub);margin-bottom:12px}
+.sheet ol{margin:0 0 14px 20px;font-size:13.5px}.sheet li{padding:3px 0}
+.tramos{display:flex;flex-direction:column;gap:8px}
+.tramos a{padding:13px;border-radius:10px;background:var(--azul);color:#fff;font-weight:700;text-decoration:none;font-size:15px;text-align:center}
+.sheet .cerrar{margin-top:12px;width:100%;padding:12px;border:1px solid var(--borde);background:#fff;border-radius:10px;font-weight:700;font-size:14px;color:var(--sub)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#1b2430;color:#fff;padding:10px 16px;border-radius:20px;font-size:13.5px;z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
+.toast.on{opacity:1}
+.pl-pop{font-family:inherit;font-size:12.5px;line-height:1.45;max-width:240px}.pl-pop b{font-size:14px}
+.pl-pop a{display:inline-block;margin-top:6px;font-weight:700;color:#1565c0;text-decoration:none}
+.pl-xm{color:#c0392b;font-weight:900;font-size:15px;line-height:16px;text-align:center;text-shadow:0 0 2px #fff,0 0 2px #fff}
+.yo-m{width:18px;height:18px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 6px rgba(26,115,232,.25)}
+.pin-bg{position:fixed;inset:0;background:linear-gradient(160deg,#1565c0 0%,#0d47a1 100%);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.pin-card{background:#fff;border-radius:20px;padding:30px 24px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:330px;width:100%}
+.pin-logo{width:60px;height:60px;border-radius:16px;background:var(--azul);color:#fff;font-weight:800;font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.pin-input{width:100%;padding:13px;font-size:20px;letter-spacing:6px;text-align:center;border:2px solid var(--borde);border-radius:12px;margin:0 0 12px;outline:none}
+.pin-btn{width:100%;padding:13px;font-size:15px;font-weight:600;background:var(--azul);color:#fff;border:none;border-radius:12px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app" id="app" style="display:none"></div>
+<div class="toast" id="toast"></div>
+<div id="pinScreen" class="pin-bg"><div class="pin-card">
+<div class="pin-logo">O</div>
+<p style="font-size:21px;font-weight:700;margin:0 0 2px">Plan de visitas</p>
+<p style="font-size:14px;color:#6b7686;margin:0 0 18px">Daniel</p>
+<input type="password" inputmode="numeric" id="pinInput" maxlength="10" placeholder="••••" class="pin-input" onkeyup="if(event.key==='Enter')verificarPin()">
+<button onclick="verificarPin()" class="pin-btn">Ingresar</button>
+<p id="pinError" style="color:#c0392b;font-size:13px;margin:10px 0 0;display:none">Código incorrecto</p>
+</div></div>
+<script>
+var VENDEDOR = 'Daniel';
+var HOY = '30/10/2026';
+var PLAN = [{"c": "013534", "n": "BORTHIRY MARIA CRISTINA", "dir": "IRIGOYEN 174", "loc": "SAN MANUEL", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "B", "vt": 1148234, "sem": 8, "cl": "D", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "014254", "n": "GUILLENEA JUAN JOSE", "dir": "OLAVARRÍA 413", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "B", "vt": 794654, "sem": 4, "cl": "D", "rep": "RAUCH", "la": -36.777425, "lo": -59.082414}, {"c": "004747", "n": "CECERI JORGE ISMAEL (ACT)", "dir": "Dinamarca 183", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Semanal", "s": "Todas", "vt": 1763530, "sem": 17, "cl": "C", "rep": "TANDIL Lunes", "la": -37.31031, "lo": -59.144059}, {"c": "012935", "n": "ALEXANDER MARCELO OSCAR", "dir": "QUINTANA 485", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.308383, "lo": -59.141396}, {"c": "012100", "n": "ARANA ALICIA NILDA", "dir": "PASTEUR 188", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.30841, "lo": -59.14649}, {"c": "011175", "n": "CORRADI IRMA SUSANA", "dir": "URQUIZA 1261", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.297628, "lo": -59.135295}, {"c": "012788", "n": "BOULANGER ROMINA ANDREA", "dir": "PASTEUR 670", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.303931, "lo": -59.140941}, {"c": "000683", "n": "MENDOZA CLAUDIA M.", "dir": "Lavalle 1155", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Quincenal", "s": "A", "vt": 911161, "sem": 11, "cl": "D", "rep": "TANDIL Lunes", "la": -37.297676, "lo": -59.137639}, {"c": "010644", "n": "ZAPICO KARINA", "dir": "IJURCO ANACLETO 2175", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Quincenal", "s": "B", "vt": 592441, "sem": 5, "cl": "C", "rep": "TANDIL Miercoles", "la": null, "lo": null}, {"c": "011071", "n": "NATYNCZYK MARIANO", "dir": "TRABAJADORES MUNICIPALES 1441", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.295966, "lo": -59.148015}, {"c": "016819", "n": "GODOY HORACIO FABIAN", "dir": "SAN MARTIN 299", "loc": "LOBERÍA", "v": "009", "vn": "Daniel", "d": "", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "", "rep": "LOBERIA", "la": -38.165711, "lo": -58.780378}, {"c": "016820", "n": "BRAVO CINTIA GISELE", "dir": "ESPAÑA 54", "loc": "LOBERÍA", "v": "009", "vn": "Daniel", "d": "", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "", "rep": "LOBERIA", "la": -38.163004, "lo": -58.781319}, {"c": "011565", "n": "ANDRES PAOLA J.", "dir": "Darragueira 2110", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Quincenal", "s": "A", "vt": 3530657, "sem": 12, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.299786, "lo": -59.124822}, {"c": "016818", "n": "RIOS MARCOS SEBASTIAN", "dir": "25 DE MAYO Y BURGOS", "loc": "LOBERÍA", "v": "009", "vn": "Daniel", "d": "", "f": "Mensual", "s": "A2", "vt": 0, "sem": 0, "cl": "", "rep": "LOBERIA", "la": null, "lo": null}, {"c": "010963", "n": "ANDERSEN ISABEL", "dir": "PASTEUR 236", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Quincenal", "s": "B", "vt": 481361, "sem": 4, "cl": "D", "rep": "TANDIL Lunes", "la": -37.307909, "lo": -59.145862}, {"c": "004883", "n": "CASAMAYOR FERNANDA MARTINA", "dir": "Nigro 1704", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Quincenal", "s": "A", "vt": 729397, "sem": 10, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.298795, "lo": -59.123383}, {"c": "004351", "n": "LIN QIUMIN", "dir": "BEIRO 1056", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Quincenal", "s": "A", "vt": 2067200, "sem": 6, "cl": "B", "rep": "TANDIL Lunes", "la": -37.299583, "lo": -59.14351}, {"c": "016823", "n": "DINGXING YAN", "dir": "AVENIDA MITRE 219", "loc": "LOBERÍA", "v": "009", "vn": "Daniel", "d": "", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "", "rep": "LOBERIA", "la": -38.161742, "lo": -58.78516}, {"c": "005679", "n": "ALESSANDRE RUSSO JORGE L.", "dir": "Av. Alvear 520", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "A", "vt": 5404567, "sem": 11, "cl": "B", "rep": "RAUCH", "la": -36.770149, "lo": -59.09676}, {"c": "011007", "n": "GUILLENEA NESTOR ALFREDO", "dir": "OLAVARRÍA & COLÓN", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "A", "vt": 690295, "sem": 6, "cl": "D", "rep": "RAUCH", "la": null, "lo": null}, {"c": "003093", "n": "MEZA ALEXIS R.", "dir": "BARRIO PROCASA I CASA 7 0", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "B", "vt": 1373915, "sem": 9, "cl": "C", "rep": "RAUCH", "la": null, "lo": null}, {"c": "000803", "n": "ZUMPANO JORGELINA ANDREA", "dir": "URQUIZA 2335", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "6", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.287681, "lo": -59.123085}, {"c": "006529", "n": "TUFANISCO MARIA FLORENCIA", "dir": "Brandsen 729", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "A", "vt": 2889167, "sem": 12, "cl": "B", "rep": "RAUCH", "la": -36.7722, "lo": -59.090351}, {"c": "012144", "n": "PEREZ SEBASTIAN ALBERTO", "dir": "VICENTE LÓPEZ 1030", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Quincenal", "s": "A", "vt": 626261, "sem": 8, "cl": "D", "rep": "TANDIL Lunes", "la": -37.304415, "lo": -59.14893}, {"c": "013421", "n": "TIMO YANINA PAOLA", "dir": "AV. CONHUE - PEGADO A LA ESCUELA", "loc": "NAPALEFU", "v": "009", "vn": "Daniel", "d": "1", "f": "Semanal", "s": "Todas", "vt": 8233119, "sem": 14, "cl": "B", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "013423", "n": "CAVEDA CLAUDIO ANIBAL", "dir": "CUARTEL 10", "loc": "DOS NACIONES", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "B", "vt": 3258514, "sem": 3, "cl": "C", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "011123", "n": "PIZZORNO IGNACIO", "dir": "AVELEYRA 342", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "A", "vt": 998452, "sem": 11, "cl": "C", "rep": "RAUCH", "la": -36.775239, "lo": -59.093827}, {"c": "011513", "n": "CABALLERO GASTON BAUTISTA", "dir": "Nigro 1840", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Semanal", "s": "Todas", "vt": 1445511, "sem": 14, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.297584, "lo": -59.121908}, {"c": "013427", "n": "CHOSCO ARAMAYO IRMA (CF)", "dir": "CERRITO 1374", "loc": "TRES ARROYOS", "v": "009", "vn": "Daniel", "d": "", "f": "Quincenal", "s": "A", "vt": 1122227, "sem": 7, "cl": "D", "rep": "TRES ARROYOS", "la": -38.375243, "lo": -60.299825}, {"c": "013418", "n": "CAPUTO VERONICA ANDREA", "dir": "IRIGOYEN 454", "loc": "SAN MANUEL", "v": "009", "vn": "Daniel", "d": "1", "f": "Semanal", "s": "Todas", "vt": 29563640, "sem": 15, "cl": "A", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "016722", "n": "MOLEDOUS ROBERTO ABEL", "dir": "AVENIDA RIVADAVIA 685", "loc": "LAS FLORES", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "", "rep": "LAS FLORES", "la": -36.019578, "lo": -59.107045}, {"c": "011008", "n": "GARCIA SABRINA", "dir": "BRANDSEN & AVENIDA PRESIDENTE JUAN DOMINGO PERÓN", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Mensual", "s": "A2", "vt": 0, "sem": 0, "cl": "D", "rep": "RAUCH", "la": null, "lo": null}, {"c": "011992", "n": "MARTINEZ FRANCO CEJAS", "dir": "BALCARCE 411", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "", "rep": "RAUCH", "la": -36.772778, "lo": -59.095565}, {"c": "013057", "n": "BONARELLI CASTETS FAUSTO", "dir": "ALEM 29", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "A", "vt": 178666, "sem": 2, "cl": "D", "rep": "RAUCH", "la": -36.775608, "lo": -59.0906}, {"c": "005657", "n": "PORTALEZ CARNOVALI LUCAS A.", "dir": "Aeronautica Argentina 2302", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "6", "f": "Semanal", "s": "Todas", "vt": 3196294, "sem": 20, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.290574, "lo": -59.120063}, {"c": "000658", "n": "KRAUEL DIEGO A.", "dir": "BERETERBIDE  702", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "A1", "vt": 74683, "sem": 1, "cl": "D", "rep": "TANDIL Lunes", "la": -37.300864, "lo": -59.13726}, {"c": "006372", "n": "GIANOLLI MACARENA", "dir": "Ijurco 2316", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Semanal", "s": "Todas", "vt": 1295973, "sem": 16, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.294121, "lo": -59.115295}, {"c": "012188", "n": "SILVA LUCAS HERNAN", "dir": "DARRAGUEIRA 1842", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Quincenal", "s": "A", "vt": 1053138, "sem": 9, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.302104, "lo": -59.121846}, {"c": "013419", "n": "AYERDI GERARDO DANIEL", "dir": "AVENIDA CONHUE Y PUTUPEYEL", "loc": "NAPALEFU", "v": "009", "vn": "Daniel", "d": "1", "f": "Semanal", "s": "Todas", "vt": 11234527, "sem": 15, "cl": "A", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "013420", "n": "SCUFFI WALTER ERNESTO", "dir": "HACIENDO 25", "loc": "NAPALEFU", "v": "009", "vn": "Daniel", "d": "1", "f": "Semanal", "s": "Todas", "vt": 8717225, "sem": 13, "cl": "B", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "010657", "n": "EL FERROVIARIO S. CAP I SECC IV", "dir": "BEIRO 757", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Semanal", "s": "Todas", "vt": 3051051, "sem": 14, "cl": "C", "rep": "TANDIL Lunes", "la": -37.302212, "lo": -59.140044}, {"c": "013553", "n": "GIGANTO STELLA MARIS", "dir": "IRIGOYEN 340", "loc": "SAN MANUEL", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "A", "vt": 650847, "sem": 6, "cl": "D", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "010165", "n": "MARTINEZ JOSE LUIS (ACT)", "dir": "Entre Ríos 697", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.291111, "lo": -59.156829}, {"c": "007134", "n": "WANG ZHENZHEN", "dir": "Quintana 647", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.306939, "lo": -59.143344}, {"c": "001219", "n": "GARBELLINI ROBERTO", "dir": "Int. Dufau 567", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": null, "lo": null}, {"c": "007174", "n": "GUAN GUOLIN (ACT)", "dir": "CORRIENTES 399", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Semanal", "s": "Todas", "vt": 1856902, "sem": 13, "cl": "C", "rep": "TANDIL Lunes", "la": -37.293056, "lo": -59.161426}, {"c": "000701", "n": "URAN JORGE ALBERTO", "dir": "PATAGONIA 275", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Semanal", "s": "Todas", "vt": 1612334, "sem": 13, "cl": "C", "rep": "TANDIL Lunes", "la": -37.304956, "lo": -59.148815}, {"c": "011009", "n": "HOURCADE LUCIANA ANDREA", "dir": "GARRALDA 599", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "D", "rep": "RAUCH", "la": -36.774253, "lo": -59.090615}, {"c": "012220", "n": "SALINAS ELSA NATALIA", "dir": "AV. MORENO 599", "loc": "TRES ARROYOS", "v": "009", "vn": "Daniel", "d": "", "f": "Quincenal", "s": "B", "vt": 2603374, "sem": 11, "cl": "D", "rep": "TRES ARROYOS", "la": -38.381338, "lo": -60.270138}, {"c": "012221", "n": "SALINAS ELSA NATALIA", "dir": "AV. RIVADAVIA 676", "loc": "TRES ARROYOS", "v": "009", "vn": "Daniel", "d": "", "f": "Quincenal", "s": "A", "vt": 2248292, "sem": 8, "cl": "C", "rep": "", "la": -38.3821, "lo": -60.281913}, {"c": "013770", "n": "LAGUNO LUIS ANGEL", "dir": "URQUIZA 159", "loc": "SAN MANUEL", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "B", "vt": 505215, "sem": 6, "cl": "D", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "016799", "n": "CLIENTE X LOBERIA", "dir": null, "loc": "LOBERIA", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "A2", "vt": 0, "sem": 0, "cl": "", "rep": "LOBERIA", "la": null, "lo": null}, {"c": "016801", "n": "CLIENTE X LAS FLORES", "dir": null, "loc": "LAS FLORES", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "", "rep": "LAS FLORES", "la": null, "lo": null}, {"c": "014252", "n": "DAMIANO ROBERTO ENRIQUE", "dir": "AVENIDA CONHUE 654", "loc": "NAPALEFU", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "B", "vt": 397979, "sem": 5, "cl": "D", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "106405", "n": "ROCIO ELISABET SAFFARANO", "dir": "SAN MARTIN 74", "loc": "SAN MANUEL", "v": "009", "vn": "Daniel", "d": "1", "f": "Mensual", "s": "A2", "vt": 69726, "sem": 1, "cl": "D", "rep": "NAPALEUFU", "la": null, "lo": null}, {"c": "000270", "n": "ALBORNOZ RODRIGO", "dir": "Av. Pujol 931", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Quincenal", "s": "A", "vt": 680431, "sem": 10, "cl": "D", "rep": "TANDIL Lunes", "la": null, "lo": null}, {"c": "004967", "n": "GRIGERA JORGE A.", "dir": "Dinamarca 947", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Semanal", "s": "Todas", "vt": 842934, "sem": 13, "cl": "C", "rep": "TANDIL Lunes", "la": -37.303249, "lo": -59.13537}, {"c": "010744", "n": "SOTO FABIANA ARACELI", "dir": "ROSALES 2719", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "6", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.293261, "lo": -59.130644}, {"c": "001394", "n": "CASERES NATALIA LORENA", "dir": "BEIRÓ DEPTO 1 596", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Quincenal", "s": "A", "vt": 337503, "sem": 11, "cl": "D", "rep": "TANDIL Lunes", "la": null, "lo": null}, {"c": "002154", "n": "COOPERATIVA AGROPECUARIA E INDUSTRIAL DE RAUCH LIMITADA", "dir": "JUAN GARRALDA 223", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Semanal", "s": "Todas", "vt": 17851543, "sem": 7, "cl": "A", "rep": "RAUCH", "la": null, "lo": null}, {"c": "006528", "n": "LIN MEI", "dir": "Bolívar 150", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Semanal", "s": "Todas", "vt": 5156660, "sem": 15, "cl": "B", "rep": "RAUCH", "la": -36.776604, "lo": -59.087523}, {"c": "000115", "n": "PEÑA KAREM NATALY (CF)", "dir": "Av. Gral. Paz 448", "loc": "LAS FLORES", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "A2", "vt": 0, "sem": 0, "cl": "", "rep": "LAS FLORES", "la": null, "lo": null}, {"c": "007458", "n": "ONREITA ROGELIO A.", "dir": "Quintana 1050", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Quincenal", "s": "A", "vt": 608151, "sem": 7, "cl": "D", "rep": "TANDIL Lunes", "la": -37.303275, "lo": -59.148117}, {"c": "007873", "n": "MARTINEZ MAXIMILIANO JULIAN", "dir": "Urquiza 406", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.305521, "lo": -59.145036}, {"c": "006366", "n": "FERNANDEZ RODOLFO ARNALDO", "dir": "Nigro 1849", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.29764, "lo": -59.121649}, {"c": "010659", "n": "RAMOS MARIANA FANY", "dir": "AMEGHINO 1670", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "6", "f": "Quincenal", "s": "A", "vt": 349746, "sem": 5, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.295604, "lo": -59.128546}, {"c": "006258", "n": "EGUIA RAMON DANIEL", "dir": "Cnel. Suárez 135", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "A", "vt": 4438969, "sem": 12, "cl": "B", "rep": "RAUCH", "la": null, "lo": null}, {"c": "011675", "n": "MUÑOZ AGUSTINA", "dir": "DARRAGUEIRA 1856", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Mensual", "s": "A2", "vt": 102120, "sem": 1, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.302044, "lo": -59.121927}, {"c": "010892", "n": "ESTEBERENA CANDELA", "dir": "SÁENZ PEÑA 970", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Quincenal", "s": "A", "vt": 1579352, "sem": 11, "cl": "C", "rep": "TANDIL Lunes", "la": -37.302006, "lo": -59.145083}, {"c": "010471", "n": "BELMONTE JULIETA GABRIELA", "dir": "Pasteur 853", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Semanal", "s": "Todas", "vt": 900512, "sem": 15, "cl": "C", "rep": "TANDIL Lunes", "la": -37.302295, "lo": -59.138759}, {"c": "011916", "n": "ARMOA DE ACOSTA TERESA D.", "dir": "BEIRÓ 542", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.304208, "lo": -59.137636}, {"c": "014160", "n": "ROCIO GABRIELA YULIANO", "dir": "PASO 259", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "RAUCH", "la": -36.772999, "lo": -59.080712}, {"c": "004433", "n": "LEONE MARIA SILVINA", "dir": "NIGRO 1920", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Quincenal", "s": "B", "vt": 813618, "sem": 8, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.29681, "lo": -59.120933}, {"c": "011957", "n": "NEGRETE TATIANA S.", "dir": "AVELLANEDA 396", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "D", "rep": "RAUCH", "la": -36.769289, "lo": -59.090929}, {"c": "000973", "n": "DEL SOLE ANALIA", "dir": "Aeronautica Argentina 1961", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "6", "f": "Quincenal", "s": "A", "vt": 767959, "sem": 11, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.293862, "lo": -59.123916}, {"c": "012006", "n": "KRONEBERGER FRANCISCO", "dir": "LAVALLE 488", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Quincenal", "s": "B", "vt": 516835, "sem": 7, "cl": "D", "rep": "TANDIL Lunes", "la": -37.303849, "lo": -59.145401}, {"c": "010952", "n": "ALFARO LUCIANO A.", "dir": "BASILICO 2317", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.292361, "lo": -59.117449}, {"c": "011974", "n": "CZAJKA MAXIMILIANO", "dir": "VIGIL 1880", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Quincenal", "s": "B", "vt": 1451876, "sem": 10, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.295491, "lo": -59.123856}, {"c": "010407", "n": "DE POLI MAXIMILIANO CESAR", "dir": "Quintana 247", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Quincenal", "s": "B", "vt": 922860, "sem": 11, "cl": "C", "rep": "TANDIL Lunes", "la": -37.310478, "lo": -59.138748}, {"c": "010108", "n": "LOPEZ HERNAN O.", "dir": "LABARDÉN 2312", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Semanal", "s": "Todas", "vt": 1083371, "sem": 13, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.296081, "lo": -59.124891}, {"c": "010448", "n": "DUARTE CYNTHIA Y.", "dir": "Maritorena 570", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Semanal", "s": "Todas", "vt": 1109778, "sem": 16, "cl": "C", "rep": "TANDIL Lunes", "la": -37.300366, "lo": -59.147883}, {"c": "003124", "n": "GOMEZ DARDO M.", "dir": "PASTEUR 1153", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "A1", "vt": 380425, "sem": 1, "cl": "D", "rep": "TANDIL Lunes", "la": -37.299518, "lo": -59.135341}, {"c": "000329", "n": "ACOSTA JOSE ALBERTO", "dir": "Nigro 412", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Quincenal", "s": "B", "vt": 1980100, "sem": 6, "cl": "C", "rep": "TANDIL Lunes", "la": -37.310383, "lo": -59.137457}, {"c": "010042", "n": "URDIROZ MATIAS", "dir": "BERETERBIDE  701", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Semanal", "s": "Todas", "vt": 1143305, "sem": 16, "cl": "D", "rep": "TANDIL Lunes", "la": -37.300805, "lo": -59.137144}, {"c": "008824", "n": "GONNET ELIO RICARDO", "dir": "BEIRÓ 1195", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "A2", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.298281, "lo": -59.14508}, {"c": "010800", "n": "PEREZ NOBLIAS MARIA SOLEDAD", "dir": "SAN FRANCISCO 2228", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.29315, "lo": -59.119361}, {"c": "011998", "n": "IRUMBERRI GUSTAVO EDGARDO", "dir": "Av. General Paz 915", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "D", "rep": "RAUCH", "la": -36.778163, "lo": -59.079316}, {"c": "011952", "n": "CARABAJAL DANIELA", "dir": "LAVALLE 851", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "A1", "vt": 44085, "sem": 1, "cl": "D", "rep": "TANDIL Lunes", "la": -37.300489, "lo": -59.141134}, {"c": "003086", "n": "LOURTAU MIGUEL ALFREDO", "dir": "Alberti 294", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "B", "vt": 183328, "sem": 2, "cl": "D", "rep": "RAUCH", "la": -36.779292, "lo": -59.087745}, {"c": "001848", "n": "LORENZO YAMILA M.", "dir": "Dinamarca 503", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B1", "vt": 68300, "sem": 1, "cl": "D", "rep": "TANDIL Lunes", "la": -37.307284, "lo": -59.140345}, {"c": "008820", "n": "MEJIA BATALLANOS DIONILDA", "dir": "Maritorena 740", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "A2", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.298751, "lo": -59.145944}, {"c": "004605", "n": "ARANA PATRICIA MONICA", "dir": "Sáenz Peña 584", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.305722, "lo": -59.140329}, {"c": "004699", "n": "ZABALETA PABLO MARTIN", "dir": "Labardén 2137", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.297639, "lo": -59.122695}, {"c": "000025", "n": "Betel (CF)", "dir": "9 de Julio 234", "loc": "LAS FLORES", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "", "rep": "LAS FLORES", "la": -36.010602, "lo": -59.098053}, {"c": "005931", "n": "CORIA LEONARDO MIGUEL", "dir": "AMTE. BROWN 150", "loc": "LAS FLORES", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "A2", "vt": 0, "sem": 0, "cl": "", "rep": "LAS FLORES", "la": null, "lo": null}, {"c": "000942", "n": "BERASAIN ENZO AGUSTIN (CF)", "dir": "Azul 191", "loc": "LAS FLORES", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "", "rep": "LAS FLORES", "la": -36.007116, "lo": -59.100588}, {"c": "000935", "n": "FREDES GERMAN (ACT)", "dir": "Basilico 1848", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Semanal", "s": "Todas", "vt": 2752149, "sem": 13, "cl": "B", "rep": "TANDIL Miercoles", "la": -37.296645, "lo": -59.12302}, {"c": "000277", "n": "HUANG CHENGUI (CF)", "dir": "Av. Pres. Juan Domingo Perón 359", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Semanal", "s": "Todas", "vt": 6388801, "sem": 15, "cl": "A", "rep": "RAUCH", "la": null, "lo": null}, {"c": "008823", "n": "ETCHEPARE MARCELA ALEJANDRA", "dir": "Mosconi 2091", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Quincenal", "s": "A", "vt": 918604, "sem": 4, "cl": "C", "rep": "TANDIL Lunes", "la": -37.291119, "lo": -59.15662}, {"c": "000651", "n": "MOLINA HUGO DANIEL", "dir": "Ameghino 2374", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "6", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.289098, "lo": -59.120576}, {"c": "004606", "n": "ORELLANO MAURICIO", "dir": "Mosconi 498", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.305569, "lo": -59.138188}, {"c": "007130", "n": "CANO SANDRA M.", "dir": "Vicente López 602", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.308267, "lo": -59.144042}, {"c": "004759", "n": "ONRAITA SEBASTIAN", "dir": "Hipólito Yrigoyen 435", "loc": "LAS FLORES", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "A2", "vt": 0, "sem": 0, "cl": "", "rep": "LAS FLORES", "la": -36.016321, "lo": -59.09991}, {"c": "010104", "n": "DANDERFER NESTOR FABIAN", "dir": "Vigil 2193", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Semanal", "s": "Todas", "vt": 2412728, "sem": 18, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.292687, "lo": -59.12021}, {"c": "000337", "n": "VERNA NICOLAS LEANDRO (CF)", "dir": "IJURCO & DARREGUEIRA 1599", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Quincenal", "s": "B", "vt": 2492623, "sem": 8, "cl": "C", "rep": "TANDIL Miercoles", "la": null, "lo": null}, {"c": "007135", "n": "PEIRANO SERGIO R.", "dir": "Quintana 501", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Quincenal", "s": "B", "vt": 536312, "sem": 4, "cl": "D", "rep": "TANDIL Lunes", "la": -37.308148, "lo": -59.141689}, {"c": "000997", "n": "SALDI PABLO", "dir": "Dinamarca 485", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.30754, "lo": -59.140665}, {"c": "010128", "n": "MARCELA P. LOPEZ", "dir": "Darragueira 1810", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Mensual", "s": "A2", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.302242, "lo": -59.121661}, {"c": "007151", "n": "LOZANO SANCHEZ PILAR", "dir": "Darragueira 2175", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Mensual", "s": "A1", "vt": 0, "sem": 1, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.299205, "lo": -59.12535}, {"c": "009890", "n": "ORBAICETA GASTON F.", "dir": "Ijurco 1883", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Quincenal", "s": "A", "vt": 1158317, "sem": 11, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.29831, "lo": -59.120176}, {"c": "005239", "n": "DELLATORRE CARLOS D.", "dir": "AV. M.V.PAZ Y LARRALDE", "loc": "LAS FLORES", "v": "009", "vn": "Daniel", "d": "4", "f": "Mensual", "s": "B2", "vt": 0, "sem": 0, "cl": "", "rep": "LAS FLORES", "la": null, "lo": null}, {"c": "003903", "n": "LOURTAU MIGUEL ALFREDO", "dir": "Pueyrredón 319", "loc": "RAUCH", "v": "009", "vn": "Daniel", "d": "1", "f": "Quincenal", "s": "B", "vt": 2540074, "sem": 8, "cl": "C", "rep": "RAUCH", "la": -36.775804, "lo": -59.082633}, {"c": "000699", "n": "GALAVERT JOSE MARIA", "dir": "Ijurco 3097", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Mensual", "s": "B2", "vt": 130596, "sem": 1, "cl": "D", "rep": "TANDIL Miercoles", "la": -37.287079, "lo": -59.106471}, {"c": "000208", "n": "CASTROVINCI GUILLERMO GERMAN", "dir": "María Eugenia Sanllorenti 583", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "3", "f": "Mensual", "s": "A1", "vt": 0, "sem": 0, "cl": "D", "rep": "TANDIL Lunes", "la": -37.295954, "lo": -59.152988}, {"c": "007876", "n": "DEANES LUCIANA MARIA BELEN", "dir": "Darragueira 2292", "loc": "TANDIL", "v": "009", "vn": "Daniel", "d": "5", "f": "Mensual", "s": "A1", "vt": 357429, "sem": 1, "cl": "C", "rep": "TANDIL Miercoles", "la": -37.298286, "lo": -59.126786}, {"c": "007326", "n": "JUEZ ANA A.", "dir": "Lisandro de la Torre 805", "vn": "Federico", "nv": 1, "la": -37.310087, "lo": -59.150838}, {"c": "004689", "n": "OUDOUKIAN REICH IMANOL", "dir": "Machado 672", "vn": "Juliana", "nv": 1, "la": -37.314043, "lo": -59.142782}, {"c": "010040", "n": "BARO CARLA G.", "dir": "José Cabral 624", "vn": "Federico", "nv": 1, "la": -37.312714, "lo": -59.149945}, {"c": "003526", "n": "LOREA GARRIDO FRANCO", "dir": "LISANDRO DE LA TORRE 794", "vn": "Federico", "nv": 1, "la": -37.310309, "lo": -59.150705}, {"c": "000713", "n": "WANG LEI", "dir": "Figueroa 1031", "vn": "Federico", "nv": 1, "la": -37.30707, "lo": -59.152297}, {"c": "013372", "n": "GARCIA MATIAS ALBERTO", "dir": "FIGUEROA 2299", "vn": "Federico", "nv": 1, "la": -37.295834, "lo": -59.166935}, {"c": "010057", "n": "BESOY RICARDO", "dir": "Lisandro de la Torre 1101", "vn": "Federico", "nv": 1, "la": -37.307381, "lo": -59.154286}, {"c": "000813", "n": "NIETO ROCIO DAIANA", "dir": "La Pampa 197", "vn": "Federico", "nv": 1, "la": -37.297638, "lo": -59.160182}, {"c": "011112", "n": "LANZONI MARCELO HECTOR", "dir": "MACHADO 525", "vn": "Federico", "nv": 1, "la": -37.314885, "lo": -59.144621}, {"c": "012176", "n": "GUZMAN IARA NAIR", "dir": "LISANDRO DE LA TORRE 1166", "vn": "Federico", "nv": 1, "la": -37.306934, "lo": -59.155011}, {"c": "010413", "n": "FALCON ROBERTO ENRIQUE", "dir": "Lisandro de la Torre 1146", "vn": "Federico", "nv": 1, "la": -37.307098, "lo": -59.154804}, {"c": "001968", "n": "ARDITO JOAQUIN", "dir": "Figueroa 1202", "vn": "Federico", "nv": 1, "la": -37.305651, "lo": -59.15434}, {"c": "000800", "n": "ORSINGHER LUIS DANIEL", "dir": "AERONAUTICA ARGENTINA 2097", "vn": "Fernando", "nv": 1, "la": -37.292659, "lo": -59.122485}, {"c": "011107", "n": "BARRIONUEVO CAROLINA", "dir": "ARANA 1202", "vn": "Juliana", "nv": 1, "la": -37.312102, "lo": -59.133924}, {"c": "010866", "n": "CONFORTI MARIA ISABEL (ACT)", "dir": "MACHADO 910", "vn": "Fernando", "nv": 1, "la": -37.312685, "lo": -59.139195}, {"c": "007292", "n": "LLANOS LILIANA M.", "dir": "Ijurco 2335", "vn": "Fernando", "nv": 1, "la": -37.294029, "lo": -59.114961}, {"c": "016296", "n": "LOPEZ HERNAN OSVALDO", "dir": "UGALDE 1506", "vn": "Juliana", "nv": 1, "la": -37.306566, "lo": -59.118655}, {"c": "013712", "n": "VIDAL JOSEFINA", "dir": "MARITORENA 319", "vn": "Fernando", "nv": 1, "la": -37.30269, "lo": -59.150551}, {"c": "011169", "n": "SERE JORGE DANIEL", "dir": "PEYREL 1780", "vn": "Juliana", "nv": 1, "la": -37.302102, "lo": -59.11774}, {"c": "001875", "n": "LI FEN (ACT)", "dir": "Trabajadores Municipales 1709", "vn": "Juliana", "nv": 1, "la": -37.293622, "lo": -59.15104}, {"c": "013308", "n": "VALLEJO MARIA SOL", "dir": "Américo Reynoso 1892", "vn": "Juliana", "nv": 1, "la": -37.295784, "lo": -59.157739}, {"c": "008002", "n": "MONTES PERLA K.", "dir": "Machado 963", "vn": "Fernando", "nv": 1, "la": -37.312501, "lo": -59.138432}, {"c": "013361", "n": "CASCO SOLEDAD", "dir": "PEYREL 1780", "vn": "Juliana", "nv": 1, "la": -37.302102, "lo": -59.11774}, {"c": "013715", "n": "FAGALDE MARIA VIRGINIA", "dir": "PEYREL 1336", "vn": "Juliana", "nv": 1, "la": -37.306282, "lo": -59.12262}, {"c": "004866", "n": "GUERRERO SILVINA EDITH", "dir": "Catamarca 202", "vn": "Federico", "nv": 1, "la": -37.293808, "lo": -59.164806}, {"c": "007381", "n": "WANG YIN (ACT)", "dir": "Darragueira 2248", "vn": "Fernando", "nv": 1, "la": -37.29858, "lo": -59.126328}, {"c": "010147", "n": "LUNA CAMILA", "dir": "Maritorena 319", "vn": "Fernando", "nv": 1, "la": -37.30269, "lo": -59.150551}, {"c": "013736", "n": "GARCIA VIRGINIA MARIA I. (CF)", "dir": "PEYREL 1488", "vn": "Juliana", "nv": 1, "la": -37.304906, "lo": -59.120923}, {"c": "000308", "n": "CHI JINSONG (ACT)", "dir": "Av. Colón 1387", "vn": "Juliana", "nv": 1, "la": -37.314701, "lo": -59.13615}, {"c": "002706", "n": "FEDERICO ANDRES PASCUAL (PERSONAL)", "dir": "Peyrel 1488", "vn": "Federico", "nv": 1, "la": -37.304906, "lo": -59.120923}, {"c": "008055", "n": "GUO SHAOXIONG (ACT)", "dir": "Av. del Valle 758", "vn": "Federico", "nv": 1, "la": -37.312354, "lo": -59.142541}, {"c": "012039", "n": "WALDBILLIG LAURENTINA M.", "dir": "AMEGHINO 837", "vn": "Juliana", "nv": 1, "la": -37.303349, "lo": -59.137767}, {"c": "000660", "n": "GONZALEZ PAMELA S.", "dir": "MARITORENA  420", "vn": "Fernando", "nv": 1, "la": -37.301697, "lo": -59.149535}, {"c": "000207", "n": "SUAREZ NANCY GLADYS (ACT)", "dir": "Jujuy 147", "vn": "Federico", "nv": 1, "la": -37.309673, "lo": -59.152547}, {"c": "011966", "n": "WANG CUIHONG", "dir": "IJURCO 2399", "vn": "Fernando", "nv": 1, "la": -37.29354, "lo": -59.114386}, {"c": "004599", "n": "REINOSO KARINA", "dir": "IJURCO 2116", "vn": "Fernando", "nv": 1, "la": -37.295944, "lo": -59.117543}, {"c": "002665", "n": "GARCIA MARISA ALEJANDRA", "dir": "Lisandro de la Torre 1046", "vn": "Federico", "nv": 1, "la": -37.308006, "lo": -59.153658}, {"c": "000717", "n": "URSO MAURICIO ANDRES", "dir": "Figueroa 701", "vn": "Federico", "nv": 1, "la": -37.31007, "lo": -59.148483}, {"c": "010226", "n": "ARDITO SILVIA E.", "dir": "Quintana 798", "vn": "Fernando", "nv": 1, "la": -37.305652, "lo": -59.145071}, {"c": "003158", "n": "CORIA ANDREA FABIANA", "dir": "Magallanes 96", "vn": "Federico", "nv": 1, "la": -37.305669, "lo": -59.152139}, {"c": "007344", "n": "BUJAN HECTOR R. (ACT)", "dir": "MEXICO  1504", "vn": "Fernando", "nv": 1, "la": -37.306607, "lo": -59.118415}, {"c": "007131", "n": "ARDITO MATEO NESTOR (ACT)", "dir": "Quintana 897", "vn": "Fernando", "nv": 1, "la": -37.304677, "lo": -59.146171}];
+var PLAN_INICIO = '2026-11-02';
+var GMAPS_KEY = '';
+
+function verificarPin() {
+  if (document.getElementById('pinInput').value === '1234') {
+    document.getElementById('pinScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    try { sessionStorage.setItem('plan_ok', '1'); } catch(e) {}
+    renderMapa(); iniciarGPS();
+  } else document.getElementById('pinError').style.display = 'block';
+}
+function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function plata(n) { return '$' + Math.round(n || 0).toLocaleString('es-AR'); }
+function toast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast on'; clearTimeout(t._h); t._h = setTimeout(function(){ t.className = 'toast'; }, 2200); }
+
+var DIAS_N = {'1':'Lunes','2':'Martes','3':'Miércoles','4':'Jueves','5':'Viernes','6':'Sábado','':'Sin día'};
+var SEMS = ['A1','B1','A2','B2'];
+var VENDS_PLAN = [];
+PLAN.forEach(function(p) { if (!p.nv && VENDS_PLAN.indexOf(p.vn) < 0) VENDS_PLAN.push(p.vn); });
+VENDS_PLAN.sort();
+var plSt = { v: VENDS_PLAN.indexOf(VENDEDOR) > -1 ? VENDEDOR : (VENDS_PLAN[0] || ''), d: null, s: null, otros: true, cerca: false };
+
+function fechaDeHoy() { var x = HOY.split('/'); return new Date(+x[2], +x[1] - 1, +x[0]); }
+function semanaDe(f) {
+  var x = PLAN_INICIO.split('-'), ini = new Date(+x[0], +x[1] - 1, +x[2]);
+  var lun = new Date(f.getFullYear(), f.getMonth(), f.getDate() - ((f.getDay() + 6) % 7));
+  var n = Math.round((lun - ini) / 864e5 / 7);
+  return SEMS[((n % 4) + 4) % 4];
+}
+function visitaEn(p, s) { return s === 'todo' || p.s === 'Todas' || p.s === s[0] || p.s === s; }
+function planHoy() { var f = new Date(); f = new Date(f.getFullYear(), f.getMonth(), f.getDate()); return { dia: f.getDay() ? String(f.getDay()) : '', sem: semanaDe(f) }; }
+function colorPlan(p) { return p.f === 'Semanal' ? '#e8590c' : p.f === 'Mensual' ? '#868e96' : (p.s === 'A' ? '#1971c2' : '#2f9e44'); }
+function textoPlan(p) { return p.f === 'Semanal' ? 'Semanal' : p.f + ' · semana ' + p.s; }
+
+/* ---------- Ubicacion del vendedor (GPS del celular) ---------- */
+var yo = null, gpsEstado = 'off', gpsWatch = null, yoMarker = null;
+function iniciarGPS() {
+  if (!navigator.geolocation) { gpsEstado = 'nohay'; pintarGPS(); return; }
+  gpsEstado = 'buscando'; pintarGPS();
+  if (gpsWatch !== null) navigator.geolocation.clearWatch(gpsWatch);
+  gpsWatch = navigator.geolocation.watchPosition(function(pos) {
+    var primera = !yo;
+    yo = { la: pos.coords.latitude, lo: pos.coords.longitude, acc: pos.coords.accuracy };
+    gpsEstado = 'ok';
+    if (primera) { plSt.cerca = true; renderMapa(); } else { pintarGPS(); moverYo(); pintarDistancias(); }
+  }, function(err) {
+    gpsEstado = err.code === 1 ? 'denegado' : 'error'; pintarGPS();
+  }, { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 });
+}
+function textoGPS() {
+  return gpsEstado === 'ok' ? 'Activa · ves la distancia a cada cliente' :
+    gpsEstado === 'buscando' ? 'Buscando tu ubicación…' :
+    gpsEstado === 'denegado' ? 'Bloqueada: habilitá la ubicación para esta página en el navegador' :
+    gpsEstado === 'nohay' ? 'Este celular no da la ubicación' : 'No se pudo obtener · tocá para reintentar';
+}
+function pintarGPS() {
+  var t = document.getElementById('gpsTxt'); if (t) t.textContent = textoGPS();
+  var s = document.getElementById('gpsSw'); if (s) s.className = 'pl-sw gps' + (gpsEstado === 'ok' ? ' on' : '');
+}
+function kmA(p) {
+  if (!yo || p.la == null) return null;
+  var R = 6371, k = Math.PI / 180, dLa = (p.la - yo.la) * k, dLo = (p.lo - yo.lo) * k;
+  var x = Math.sin(dLa / 2) * Math.sin(dLa / 2) + Math.cos(yo.la * k) * Math.cos(p.la * k) * Math.sin(dLo / 2) * Math.sin(dLo / 2);
+  return 2 * R * Math.asin(Math.sqrt(x)) * 1.3;
+}
+function textoKm(km) { return km == null ? '' : km < 1 ? Math.round(km * 1000 / 50) * 50 + ' m' : km.toFixed(1).replace('.', ',') + ' km'; }
+function pintarDistancias() {
+  document.querySelectorAll('[data-km]').forEach(function(el) {
+    var p = PLAN.filter(function(x) { return x.c === el.dataset.km; })[0];
+    if (p) el.textContent = textoKm(kmA(p)) ? 'a ' + textoKm(kmA(p)) + ' · ' : '';
+  });
+}
+function urlIr(p) {
+  return 'https://www.google.com/maps/dir/?api=1&travelmode=driving' + (yo ? '&origin=' + yo.la.toFixed(6) + ',' + yo.lo.toFixed(6) : '') +
+    '&destination=' + p.la.toFixed(6) + ',' + p.lo.toFixed(6);
+}
+
+function plFiltrados() {
+  return PLAN.filter(function(p) { return !p.nv && p.vn === plSt.v && p.d === plSt.d && visitaEn(p, plSt.s); });
+}
+function plOtros(lista) {
+  var pts = lista.filter(function(p) { return p.la != null; });
+  if (!pts.length) return [];
+  return PLAN.filter(function(o) {
+    if (o.la == null || (o.vn === plSt.v && !o.nv)) return false;
+    if (!o.nv && VENDS_PLAN.length < 2) return false;
+    return pts.some(function(p) {
+      var dy = (o.la - p.la) * 111, dx = (o.lo - p.lo) * 111 * Math.cos(p.la * Math.PI / 180);
+      return dx * dx + dy * dy < 0.36;
+    });
+  });
+}
+function resumenOtros(otros) {
+  var n = {};
+  otros.forEach(function(o) { n[o.vn] = (n[o.vn] || 0) + 1; });
+  return Object.keys(n).sort(function(a, b) { return n[b] - n[a]; }).map(function(v) { return v + ' ' + n[v]; }).join(', ');
+}
+
+var plMapa = null, plCapa = [], plLib = null, plCola = [], plRender = 0;
+function cargarLibMapa(cb) {
+  if (plLib === 'ok') return cb();
+  plCola.push(cb);
+  if (plLib === 'cargando') return;
+  plLib = 'cargando';
+  var listo = function() { plLib = 'ok'; var q = plCola; plCola = []; q.forEach(function(f) { f(); }); };
+  if (GMAPS_KEY) {
+    window.__gmListo = listo;
+    var s = document.createElement('script');
+    s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(GMAPS_KEY) + '&callback=__gmListo&loading=async';
+    s.onerror = function() { GMAPS_KEY = ''; plLib = null; var q = plCola; plCola = []; q.forEach(function(f) { cargarLibMapa(f); }); };
+    document.head.appendChild(s);
+  } else {
+    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'; document.head.appendChild(css);
+    var js = document.createElement('script'); js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'; js.onload = listo;
+    js.onerror = function() { plLib = null; var m = document.getElementById('plMap'); if (m) m.innerHTML = '<div class="empty">No se pudo cargar el mapa (¿sin internet?)</div>'; };
+    document.head.appendChild(js);
+  }
+}
+function usaGoogle() { return !!(window.google && window.google.maps && GMAPS_KEY); }
+
+function renderMapa() {
+  var hoyP = planHoy();
+  if (!plSt.s) plSt.s = hoyP.sem;
+  var delV = PLAN.filter(function(p) { return !p.nv && p.vn === plSt.v; });
+  var dias = ['1','2','3','4','5','6',''].filter(function(d) { return delV.some(function(p) { return p.d === d; }); });
+  if (plSt.d === null || dias.indexOf(plSt.d) < 0) plSt.d = dias.indexOf(hoyP.dia) > -1 ? hoyP.dia : dias[0];
+  var delDia = delV.filter(function(p) { return p.d === plSt.d; });
+  var lista = plFiltrados();
+  var ch = function(items, act, fn) {
+    return '<div class="chips">' + items.map(function(x) { return '<span class="chip' + (x[0] === act ? ' on' : '') + '" onclick="' + fn + '(\'' + x[0] + '\')">' + x[1] + '</span>'; }).join('') + '</div>';
+  };
+  var html = '<div class="appbar"><div class="ab-logo">O</div><div class="ab-txt"><p class="ab-title">Plan de visitas</p><p class="ab-sub">' + esc(plSt.v) + ' · hoy ' + (DIAS_N[hoyP.dia] || 'domingo') + ', semana ' + hoyP.sem + '</p></div></div>';
+  html += '<div class="hero-s"></div><div class="pl-ctl">';
+  if (VENDS_PLAN.length > 1) html += ch(VENDS_PLAN.map(function(v) { return [v, v]; }), plSt.v, 'plVend');
+  html += ch(dias.map(function(d) { return [d, DIAS_N[d] + ' (' + delV.filter(function(p) { return p.d === d; }).length + ')' + (d === hoyP.dia ? ' · hoy' : '')]; }), plSt.d, 'plDia');
+  html += ch([['todo', 'Todo el día']].concat(SEMS.map(function(s) {
+    return [s, 'Sem. ' + s + ' (' + delDia.filter(function(p) { return visitaEn(p, s); }).length + ')' + (s === hoyP.sem ? ' ●' : '')];
+  })), plSt.s, 'plSem');
+  html += '</div>';
+  var maxSem = Math.max.apply(null, SEMS.map(function(s) { return delDia.filter(function(p) { return visitaEn(p, s); }).length; }));
+  html += '<div class="pl-tot"><div><b>' + (plSt.s === 'todo' ? delDia.length : lista.length) + '</b><small>' + (plSt.s === 'todo' ? 'Clientes del día' : 'A visitar esa semana') + '</small></div>' +
+    '<div><b>' + delDia.filter(function(p) { return p.f === 'Semanal'; }).length + '</b><small>Semanales</small></div>' +
+    '<div><b>' + maxSem + '</b><small>Máx. por semana</small></div></div>';
+  html += '<div class="pl-sw-row" onclick="iniciarGPS()"><span class="pl-sw gps' + (gpsEstado === 'ok' ? ' on' : '') + '" id="gpsSw"><i></i></span>' +
+    '<div><b>📍 Mi ubicación</b><small id="gpsTxt">' + textoGPS() + '</small></div></div>';
+  var otros = plOtros(plSt.s === 'todo' ? delDia : lista);
+  html += '<div class="pl-sw-row" onclick="plToggleOtros()"><span class="pl-sw' + (plSt.otros ? ' on' : '') + '"><i></i></span>' +
+    '<div><b>Clientes de otros vendedores (no visitar)</b><small>' + otros.length + ' en esta zona' + (otros.length ? ' · ' + resumenOtros(otros) : '') + '</small></div></div>';
+  html += '<div class="pl-ley"><span><i class="pl-dot" style="background:#e8590c"></i>Semanal</span><span><i class="pl-dot" style="background:#1971c2"></i>Quincenal A</span>' +
+    '<span><i class="pl-dot" style="background:#2f9e44"></i>Quincenal B</span><span><i class="pl-dot" style="background:#fff;border:3px solid #868e96"></i>Mensual</span>' +
+    (plSt.otros && otros.length ? '<span><i class="pl-x">✕</i>No visitar</span>' : '') + '<span><i class="pl-dot" style="background:#1a73e8;box-shadow:0 0 0 3px rgba(26,115,232,.3)"></i>Vos</span></div>';
+  html += '<div class="pl-map-w"><div class="pl-map" id="plMap"></div><button class="pl-yo-btn" onclick="centrarYo()">📍 Dónde estoy</button></div>';
+  var orden = { Semanal: 0, Quincenal: 1, Mensual: 2 };
+  if (plSt.cerca && yo) lista.sort(function(a, b) { var x = kmA(a), y = kmA(b); return (x == null ? 9e9 : x) - (y == null ? 9e9 : y); });
+  else lista.sort(function(a, b) { return orden[a.f] - orden[b.f] || (a.s < b.s ? -1 : a.s > b.s ? 1 : 0) || b.vt - a.vt; });
+  html += '<p class="pl-orden"><span>Clientes (' + lista.length + ')</span>' + (yo ? '<span class="lk" onclick="plSt.cerca=!plSt.cerca;renderMapa()">' + (plSt.cerca ? 'Ordenar por frecuencia' : 'Ordenar: más cerca primero') + '</span>' : '') + '</p>';
+  html += '<div class="pl-lst">' + (lista.length ? lista.map(function(p) {
+    var col = colorPlan(p), men = p.f === 'Mensual', km = kmA(p);
+    return '<div class="pl-it"><i class="pl-dot" style="' + (men ? 'background:#fff;border:3px solid ' + col : 'background:' + col) + '"></i>' +
+      '<div class="pl-inf" onclick="plVer(\'' + p.c + '\')"><b>' + esc(p.n) + '</b><small><span class="km" data-km="' + p.c + '">' + (km != null ? 'a ' + textoKm(km) + ' · ' : '') + '</span>' +
+      textoPlan(p) + ' · ' + esc(p.dir || '') + (p.la == null ? ' · <span style="color:var(--rojo)">sin ubicación</span>' : '') + '</small></div>' +
+      (p.la != null ? '<a class="pl-ir" href="' + urlIr(p) + '" target="_blank" rel="noopener" onclick="this.href=urlIr(PLAN.filter(function(x){return x.c===\'' + p.c + '\';})[0])">Ir</a>' : '') + '</div>';
+  }).join('') : '<div class="empty">Sin clientes para esa semana</div>') + '</div>';
+  var conUb = lista.filter(function(p) { return p.la != null; }).length;
+  if (plSt.s !== 'todo' && conUb) html += '<div class="bottom-bar"><button class="bb-btn" onclick="armarRecorrido()">ABRIR RECORRIDO EN GOOGLE MAPS (' + conUb + ')</button></div>';
+  document.getElementById('app').innerHTML = html;
+  plMapa = null; plCapa = []; yoMarker = null;
+  var tk = ++plRender;
+  cargarLibMapa(function() { if (tk === plRender) plDibujar(lista, plSt.otros ? otros : []); });
+}
+function plVend(v) { plSt.v = v; plSt.d = null; renderMapa(); }
+function plDia(d) { plSt.d = d; renderMapa(); }
+function plSem(s) { plSt.s = s; renderMapa(); }
+function plToggleOtros() { plSt.otros = !plSt.otros; renderMapa(); }
+
+function plPopup(p) {
+  return '<div class="pl-pop"><b>' + esc(p.n) + '</b><br>#' + esc(p.c) + ' · ' + esc(p.dir || '') + '<br>' +
+    '<span style="color:' + colorPlan(p) + ';font-weight:700">' + textoPlan(p) + '</span>' + (p.rep ? '<br>Reparto: ' + esc(p.rep) : '') + '<br>' +
+    '<a href="' + urlIr(p) + '" target="_blank" rel="noopener">➜ Cómo llegar' + (yo ? ' (' + textoKm(kmA(p)) + ')' : '') + '</a></div>';
+}
+function plPopupOtro(o) {
+  return '<div class="pl-pop"><b>' + esc(o.n) + '</b><br>#' + esc(o.c) + ' · ' + esc(o.dir || '') + '<br>' +
+    '<span style="color:#c0392b;font-weight:700">✕ No visitar · cliente de ' + esc(o.vn) + '</span></div>';
+}
+function plDibujar(lista, otros) {
+  var el = document.getElementById('plMap');
+  if (!el) return;
+  var pts = lista.filter(function(p) { return p.la != null; });
+  if (usaGoogle()) {
+    var gm = google.maps;
+    plMapa = new gm.Map(el, { center: { lat: -37.32, lng: -59.13 }, zoom: 13, mapTypeControl: false, streetViewControl: false, fullscreenControl: true, clickableIcons: false });
+    var info = new gm.InfoWindow(), b = new gm.LatLngBounds();
+    otros.forEach(function(o) {
+      var m = new gm.Marker({ map: plMapa, position: { lat: o.la, lng: o.lo }, title: 'No visitar · ' + o.n, zIndex: 1,
+        icon: { path: 'M -4,-4 L 4,4 M 4,-4 L -4,4', strokeColor: '#c0392b', strokeWeight: 3, scale: 1 } });
+      m.addListener('click', function() { info.setContent(plPopupOtro(o)); info.open(plMapa, m); });
+    });
+    pts.forEach(function(p) {
+      var men = p.f === 'Mensual', col = colorPlan(p);
+      var m = new gm.Marker({ map: plMapa, position: { lat: p.la, lng: p.lo }, title: p.n, zIndex: 5,
+        icon: { path: gm.SymbolPath.CIRCLE, scale: p.f === 'Semanal' ? 9 : 7, fillColor: men ? '#ffffff' : col, fillOpacity: 1, strokeColor: men ? col : '#ffffff', strokeWeight: men ? 3 : 2 } });
+      var abrir = function() { info.setContent(plPopup(p)); info.open(plMapa, m); };
+      m.addListener('click', abrir);
+      plCapa.push({ c: p.c, m: m, abrir: function() { plMapa.setCenter(m.getPosition()); plMapa.setZoom(16); abrir(); } });
+      b.extend(m.getPosition());
+    });
+    if (pts.length > 1) plMapa.fitBounds(b, 30); else if (pts.length) { plMapa.setCenter(b.getCenter()); plMapa.setZoom(16); }
+  } else if (window.L) {
+    plMapa = L.map(el, { zoomControl: true });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(plMapa);
+    var icoX = L.divIcon({ className: 'pl-xm', html: '✕', iconSize: [16, 16], iconAnchor: [8, 8] });
+    otros.forEach(function(o) { L.marker([o.la, o.lo], { icon: icoX, zIndexOffset: -500 }).bindPopup(plPopupOtro(o)).addTo(plMapa); });
+    var ll = [];
+    pts.forEach(function(p) {
+      var men = p.f === 'Mensual', col = colorPlan(p);
+      var m = L.circleMarker([p.la, p.lo], { radius: p.f === 'Semanal' ? 9 : 7, color: men ? col : '#fff', weight: men ? 3 : 2, fillColor: men ? '#fff' : col, fillOpacity: 1 })
+        .bindPopup(function() { return plPopup(p); }).addTo(plMapa);
+      plCapa.push({ c: p.c, m: m, abrir: function() { plMapa.setView(m.getLatLng(), 16); m.openPopup(); } });
+      ll.push([p.la, p.lo]);
+    });
+    if (ll.length) plMapa.fitBounds(ll, { padding: [30, 30], maxZoom: 16 }); else plMapa.setView([-37.32, -59.13], 13);
+  }
+  moverYo();
+}
+function moverYo() {
+  if (!yo || !plMapa) return;
+  if (usaGoogle()) {
+    if (!yoMarker) yoMarker = new google.maps.Marker({ map: plMapa, zIndex: 10, title: 'Vos',
+      icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#1a73e8', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 3 } });
+    yoMarker.setPosition({ lat: yo.la, lng: yo.lo });
+  } else if (window.L) {
+    if (!yoMarker) yoMarker = L.marker([yo.la, yo.lo], { icon: L.divIcon({ className: '', html: '<div class="yo-m"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), zIndexOffset: 1000 }).bindPopup('Estás acá').addTo(plMapa);
+    else yoMarker.setLatLng([yo.la, yo.lo]);
+  }
+}
+function centrarYo() {
+  if (!yo) { iniciarGPS(); toast(gpsEstado === 'denegado' ? 'Habilitá la ubicación para esta página' : 'Buscando tu ubicación…'); return; }
+  if (usaGoogle()) { plMapa.setCenter({ lat: yo.la, lng: yo.lo }); plMapa.setZoom(16); }
+  else if (plMapa) plMapa.setView([yo.la, yo.lo], 16);
+}
+function plVer(id) {
+  var x = plCapa.filter(function(k) { return k.c === id; })[0];
+  if (!x) { toast('Este cliente no tiene ubicación en el mapa'); return; }
+  x.abrir();
+  document.getElementById('plMap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ---------- Recorrido: desde donde esta el vendedor, el mas corto, en Google Maps ---------- */
+function dist(a, b) { var dy = (a.la - b.la) * 111, dx = (a.lo - b.lo) * 111 * Math.cos(a.la * Math.PI / 180); return Math.sqrt(dx * dx + dy * dy); }
+function ordenar(origen, P) {
+  var resto = P.slice(), orden = [], act = origen || null;
+  if (!act) { act = resto.shift(); orden.push(act); }
+  while (resto.length) {
+    var mi = 0; for (var i = 1; i < resto.length; i++) if (dist(act, resto[i]) < dist(act, resto[mi])) mi = i;
+    act = resto.splice(mi, 1)[0]; orden.push(act);
+  }
+  var largo = function(o) { var t = origen ? dist(origen, o[0]) : 0; for (var k = 1; k < o.length; k++) t += dist(o[k - 1], o[k]); return t; };
+  var mejoro = true, vueltas = 0;
+  while (mejoro && vueltas++ < 50) {
+    mejoro = false;
+    for (var a = 0; a < orden.length - 1; a++) for (var b = a + 1; b < orden.length; b++) {
+      var nuevo = orden.slice(0, a).concat(orden.slice(a, b + 1).reverse(), orden.slice(b + 1));
+      if (largo(nuevo) < largo(orden) - 0.001) { orden = nuevo; mejoro = true; }
+    }
+  }
+  return { orden: orden, km: largo(orden) * 1.3 };
+}
+function armarRecorrido() {
+  var P = plFiltrados().filter(function(p) { return p.la != null; });
+  if (!P.length) return;
+  var r = ordenar(yo, P), o = r.orden, f = function(p) { return p.la.toFixed(6) + ',' + p.lo.toFixed(6); };
+  var tramos = [], desde = yo, i = 0;
+  while (i < o.length) {
+    var parte = o.slice(i, i + 10);
+    var u = 'https://www.google.com/maps/dir/?api=1&travelmode=driving' + (desde ? '&origin=' + f(desde) : '') + '&destination=' + f(parte[parte.length - 1]);
+    var medio = parte.slice(0, -1); if (medio.length) u += '&waypoints=' + encodeURIComponent(medio.map(f).join('|'));
+    tramos.push({ u: u, a: i + 1, b: i + parte.length });
+    desde = parte[parte.length - 1]; i += parte.length;
+  }
+  var html = '<div class="sheet-bg" id="sheet" onclick="if(event.target===this)this.remove()"><div class="sheet">' +
+    '<h3>Recorrido de ' + o.length + ' clientes · ~' + Math.round(r.km) + ' km</h3>' +
+    '<p>' + (yo ? 'Arranca desde donde estás ahora.' : 'Sin tu ubicación: arranca por el primer cliente. Activá "Mi ubicación" para salir desde donde estás.') + '</p><ol>' +
+    o.map(function(p) { return '<li>' + esc(p.n) + ' <span style="color:#6b7686">· ' + esc(p.dir || '') + '</span></li>'; }).join('') + '</ol>' +
+    '<div class="tramos">' + tramos.map(function(t, k) { return '<a href="' + t.u + '" target="_blank" rel="noopener">Abrir en Google Maps' + (tramos.length > 1 ? ' · tramo ' + (k + 1) + ' (paradas ' + t.a + ' a ' + t.b + ')' : '') + '</a>'; }).join('') + '</div>' +
+    '<button class="cerrar" onclick="document.getElementById(\'sheet\').remove()">Cerrar</button></div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+try { if (sessionStorage.getItem('plan_ok') === '1') { document.getElementById('pinScreen').style.display = 'none'; document.getElementById('app').style.display = 'block'; renderMapa(); iniciarGPS(); } } catch(e) {}
+</script>
+</body>
+</html>
