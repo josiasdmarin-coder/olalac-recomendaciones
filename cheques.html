@@ -102,15 +102,15 @@ $('guardar').onclick = async () => {
   cfg = {nombre: n, pin: p}; ls.set('chq_nombre', n); ls.set('chq_pin', p); $('cfgMsg').textContent = ''; inicio();
 };
 
-// achica la foto (máx 1600 px) para que viaje rápido con datos móviles
+// achica la foto (máx 2400 px, buena calidad para ver retoques) para que viaje rápido con datos móviles
 function achicar(file){
   return new Promise((ok, mal) => {
     const fr = new FileReader();
     fr.onload = () => { const im = new Image(); im.onload = () => {
-      const k = Math.min(1, 1600 / Math.max(im.width, im.height)), c = document.createElement('canvas');
+      const k = Math.min(1, 2400 / Math.max(im.width, im.height)), c = document.createElement('canvas');
       c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
       c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-      ok(c.toDataURL('image/jpeg', 0.82)); }; im.onerror = mal; im.src = fr.result; };
+      ok(c.toDataURL('image/jpeg', 0.9)); }; im.onerror = mal; im.src = fr.result; };
     fr.onerror = mal; fr.readAsDataURL(file);
   });
 }
